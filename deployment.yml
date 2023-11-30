@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: notwietse-dev
+  name: sqlinjectiontest
+  annotations: {}
+spec:
+  selector:
+    matchLabels:
+      app: name
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: name
+    spec:
+      containers:
+        - name: container
+          image: >-
+            registry.digitalocean.com/openshiftcourse/mysql:latest
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          env: 
+            - name: MYSQL_DATABASE 
+              value: blogdb
+            - name: MYSQL_USER
+              value: trainee
+            - name: MYSQL_PASSWORD
+              value: difficultpwd123
+            - name: MYSQL_RANDOM_ROOT_PASSWORD
+              value: '1'
+      imagePullSecrets: 
+        - name: registry-auth 
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  paused: false
